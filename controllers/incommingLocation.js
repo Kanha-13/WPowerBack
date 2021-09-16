@@ -3,9 +3,10 @@ module.exports = {
     handelIncommingLocation: (socket) => {
         const connectionFrom = socket.handshake.query.user
         //jo connect hua hai wo emit kiya chat tho ye chalega
-        socket.on('help', async (payload) => {
-            io.emit("help", payload)
+        socket.on('location', async (payload) => {
+            // io.emit("help", payload)
             console.log(payload)
+            socket.broadcast.emit('familyLocation', payload);
             // const userExists = await userProfile.findOne({ name: payload.for })
             // if (userExists) {
             //     const Payload = { ...payload, from: connectionFrom }
