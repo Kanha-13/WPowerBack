@@ -7,6 +7,8 @@ const incommingLocation = require("./routes/incommingLocation");
 const connection = require('./routes/connection');
 const contactconnection = require('./routes/contactconnection');
 const userProfile = require('./routes/handelUserProfile');
+const helpCall = require('./routes/helpCall')
+
 const connection_url = API;
 
 //mongo connection 
@@ -28,6 +30,7 @@ io.on('connection', (socket) => {
   incommingLocation(socket)
   contactconnection(socket)
   userProfile(socket)
+  helpCall(socket)
 });
 
 //listener

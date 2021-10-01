@@ -6,7 +6,7 @@ module.exports = {
         socket.on('location', async (payload) => {
             // io.emit("help", payload)
             console.log(payload)
-            socket.broadcast.emit('familyLocation', payload);
+            // socket.broadcast.emit('familyLocation', payload);
             // const userExists = await userProfile.findOne({ name: payload.for })
             // if (userExists) {
             //     const Payload = { ...payload, from: connectionFrom }
