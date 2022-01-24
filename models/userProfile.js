@@ -8,13 +8,8 @@ const userProfileSchema = new mongoose.Schema({
         type: String,
         require: true
     },
-    location: {
-        latitude: {
-            type: String,
-        },
-        longitude: {
-            type: String,
-        }
+    loc: {
+        type: Object
     },
     email: {
         type: String,

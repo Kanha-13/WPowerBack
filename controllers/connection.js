@@ -1,9 +1,21 @@
 const userProfile = require('../models/userProfile')
 module.exports = {
     connectionHandel: async (socket) => {
-        const userMobileNumber = socket.handshake.query.mobileNumber
-        console.log("New socket connected...")
-        await userProfile.updateOne({ mobileNumber: userMobileNumber }, { $set: { mobileNumber: userMobileNumber, socketId: socket.id } }, { new: true, upsert: true });
+        try {
+            const userMobileNumber = socket.handshake.query.mobileNumber
+            const userLatitude = socket.handshake.query.latitude
+            const userLongitude = socket.handshake.query.longitude
+            console.log("New socket connected...")
+            await userProfile.updateOne({ mobileNumber: userMobileNumber }, {
+                $set: {
+                    mobileNumber: userMobileNumber,
+                    socketId: socket.id, loc: { type: "Point", coordinates: [Number(userLongitude), Number(userLatitude)] }
+                }
+            }, { new: true, upsert: true });
+        } catch (error) {
+            console.log(error)
+            // socket.emit('server-error', { errorMsg: "Server error" })
+        }
         // const userCount = await userProfile.countDocuments()
         // io.to(socket.id).emit("yourId", { id: userCount });
         // socket.broadcast.emit("IamOnline", { mobileNumber: userMobileNumber });

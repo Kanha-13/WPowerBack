@@ -8,6 +8,12 @@ const connection = require('./routes/connection');
 const contactconnection = require('./routes/contactconnection');
 const userProfile = require('./routes/handelUserProfile');
 const helpCall = require('./routes/helpCall')
+const iamsafe = require('./routes/iamsafe')
+const Cors = require('cors');
+
+
+//routes
+const gurdians = require('./routes/UserSpecificRoutes/guardian')
 
 const connection_url = API;
 
@@ -31,7 +37,21 @@ io.on('connection', (socket) => {
   contactconnection(socket)
   userProfile(socket)
   helpCall(socket)
+  iamsafe(socket)
 });
 
+//middlewares
+// app.use(express.json());
+// app.use(express.static(__dirname))
+app.use(Cors({ origin: "*" }));
+// app.use(cookieParser());
+
+
+//api end points
+app.use(gurdians)
+
 //listener
-server.listen(PORT, () => { console.log(`Server is listening at localhost:${PORT}`); });
+server.listen(PORT, () => console.log(`Server is listening at localhost:${PORT}`));
+
+//http server
+app.listen(2000, () => console.log("http server at 2000"))
