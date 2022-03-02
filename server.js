@@ -12,8 +12,9 @@ const iamsafe = require('./routes/iamsafe')
 const Cors = require('cors');
 
 
+
 //routes
-const gurdians = require('./routes/UserSpecificRoutes/guardian')
+const gurdians = require('./routes/UserSpecificRoutes/guardian');
 
 const connection_url = API;
 
@@ -36,7 +37,7 @@ io.on('connection', (socket) => {
   incommingLocation(socket)
   contactconnection(socket)
   userProfile(socket)
-  helpCall(socket)
+  helpCall(socket, io)
   iamsafe(socket)
 });
 
@@ -48,10 +49,10 @@ app.use(Cors({ origin: "*" }));
 
 
 //api end points
+app.get('/', (req, res) => {
+  res.send("Server running...")
+})
 app.use(gurdians)
 
 //listener
 server.listen(PORT, () => console.log(`Server is listening at localhost:${PORT}`));
-
-//http server
-app.listen(2000, () => console.log("http server at 2000"))

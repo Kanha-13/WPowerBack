@@ -6,10 +6,11 @@ module.exports = {
             const userLatitude = socket.handshake.query.latitude
             const userLongitude = socket.handshake.query.longitude
             console.log("New socket connected...")
+            console.log(userMobileNumber)
             await userProfile.updateOne({ mobileNumber: userMobileNumber }, {
                 $set: {
                     mobileNumber: userMobileNumber,
-                    socketId: socket.id, loc: { type: "Point", coordinates: [Number(userLongitude), Number(userLatitude)] }
+                    socket: JSON.stringify(socket), loc: { type: "Point", coordinates: [Number(userLongitude), Number(userLatitude)] }
                 }
             }, { new: true, upsert: true });
         } catch (error) {

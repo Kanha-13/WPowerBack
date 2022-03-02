@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const userProfileSchema = new mongoose.Schema({
-    socketId: {
+    socket: {
         type: String,
         require: true
     },
