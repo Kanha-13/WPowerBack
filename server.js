@@ -1,4 +1,5 @@
-const app = require('express')();
+const express = require('express');
+const app = express();
 const server = require('http').createServer(app);
 const mongoose = require('mongoose');
 const API = process.env.MONGO_API || require('./API_KEY');
@@ -15,6 +16,7 @@ const Cors = require('cors');
 
 //routes
 const gurdians = require('./routes/UserSpecificRoutes/guardian');
+const signup = require('./routes/signup');
 
 const connection_url = API;
 
@@ -42,9 +44,9 @@ io.on('connection', (socket) => {
 });
 
 //middlewares
-// app.use(express.json());
 // app.use(express.static(__dirname))
 app.use(Cors({ origin: "*" }));
+app.use(express.json());
 // app.use(cookieParser());
 
 
@@ -53,6 +55,6 @@ app.get('/', (req, res) => {
   res.send("Server running...")
 })
 app.use(gurdians)
-
+app.use(signup)
 //listener
 server.listen(PORT, () => console.log(`Server is listening at localhost:${PORT}`));
