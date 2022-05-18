@@ -1,25 +1,90 @@
 const express = require('express');
 const app = express();
-// const server = require('http').createServer(app);
 const mongoose = require('mongoose');
 const ws = require('ws');
-
+const fs = require("fs");
 const API = process.env.MONGO_API || require('./API_KEY');
 const PORT = process.env.PORT || 1310;
-
-// const incommingLocation = require("./routes/incommingLocation");
-// const connection = require('./routes/connection');
-// const contactconnection = require('./routes/contactconnection');
-// const userProfile = require('./routes/handelUserProfile');
-// const helpCall = require('./routes/helpCall')
-// const iamsafe = require('./routes/iamsafe')
 const Cors = require('cors');
+
+//ws instance
+const wsServer = new ws.Server({ noServer: true });
+
+
+
+const getAllHelpReq = () => {
+  return new Promise((resolve, reject) => {
+    fs.readFile("./AllHelpRequests.json", "utf8", (err, data) => {
+      if (err) {
+        return reject(err);
+      }
+
+      resolve(JSON.parse(data));
+    });
+  });
+}
+
+const updateTheFile = (updatedData) => {
+  return new Promise((resolve, reject) => {
+    fs.writeFile('./AllHelpRequests.json', JSON.stringify(updatedData), function writeJSON(err) {
+      if (err) return reject(err);
+      return resolve("Updated successfully")
+    });
+  });
+}
+
+const callbackAfterRead = (helpRequests, data) => {
+  // const helpReqIndex = helpRequests.findIndex(req => req.phoneNumber === data.userData.phoneNumber);
+  if (helpRequests[data.userData.phoneNumber]) {
+    helpRequests[data.userData.phoneNumber].cords = data.cords
+  } else {
+    helpRequests[data.userData.phoneNumber] = {
+      phoneNumber: data.userData.phoneNumber,
+      cords: data.cords,
+      // address: data.address
+    }
+  }
+  updateTheFile(helpRequests).then(() => {
+    wsServer.broadcast({ needYourHelp: helpRequests })
+  }).catch((error) => console.log(error))
+}
+
+wsServer.broadcast = function broadcast(payload) {
+  const allRequests = JSON.stringify(payload)
+  wsServer.clients.forEach(function each(client) {
+    client.send(allRequests);
+  });
+}
+
+
+
+const updateUserHelpRequest = (data) => {//need to optimize this function
+  getAllHelpReq().then((helpRequests) => {
+    callbackAfterRead(helpRequests, data)
+  }).catch((error) => {
+    console.log(error)
+  })
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 //routes
 const gurdians = require('./routes/UserSpecificRoutes/guardian');
 const signup = require('./routes/signup');
+const { json } = require('express/lib/response');
+const { all } = require('express/lib/application');
 
 const connection_url = API;
 let helpRequests = []
@@ -34,29 +99,22 @@ mongoose.connect(connection_url, {
   console.log(err)
 })
 
-//ws instance
-const wsServer = new ws.Server({ noServer: true });
-
-
-wsServer.broadcast = function broadcast(msg) {
-  wsServer.clients.forEach(function each(client) {
-    client.send(msg);
-  });
-}
-
-
 wsServer.on('connection', socket => {
   socket.on('message', message => {
     try {
       const eventName = JSON.parse(message).eventName
-      console.log(eventName)
       if (eventName === "helpMe") {
-        helpRequests.push(message)
-        console.log(helpRequests)
-        wsServer.broadcast(helpRequests)
-        console.log("I got help request")
-        console.log(`and payload is `, JSON.parse(message).payload)
+        const payloadData = JSON.parse(message).payload
+        updateUserHelpRequest(payloadData)
+        // helpRequests.push(message)
+        // wsServer.broadcast()
       } else if (eventName === "iAmSafe") {
+        wsServer.broadcast({
+          thisPersonIsSafeNow: {
+            cords: JSON.parse(message).payload.cords,
+            phoneNumber: JSON.parse(message).payload.phoneNumber
+          }
+        })
         console.log("this person is safe now")
         console.log(`and payload is `, JSON.parse(message).payload)
       }

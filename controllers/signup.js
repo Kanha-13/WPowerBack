@@ -36,10 +36,7 @@ module.exports = {
       const email = req.params['emailId']
       const isValid = await ValidateEmail(email);
       if (isValid) {
-        console.log(req.body)
         const otp = parseInt(req.body.otp)
-        console.log(otp)
-        console.log(typeof otp)
         if (typeof otp === "number") {
           const response = await otps.deleteOne({ email: email, otp: otp })
           if (response.deleteCount)
