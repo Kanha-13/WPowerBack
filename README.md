@@ -16,17 +16,21 @@ This backend authenticate and authorize users and after success opens a web-sock
   2. `API_KEY.js`
 
   **In secret.js paste this-**
-  -  const secret = {
-  email: "youremail",
-  password: "password"
-  }
-  module.exports = secret;
+  
+    const secret = {
+    email: "youremail",
+    password: "password"
+    }
+    
+    module.exports = secret;
 
   Create an email account to use nodemailer for email opt service. It would be recomended to crete an account on yahoo or outlook, because email may not work because of 2 factor authentication.
 
   **In API_KEY.js-**
-  - const MONGO_API = "mongodb-uri"
-  module.exports = MONGO_API
+  
+     const MONGO_API = "mongodb-uri"
+  
+     module.exports = MONGO_API
 
 4. `nodemon` or `npm start`
   
