@@ -7,6 +7,10 @@ const API = process.env.MONGO_API || require('./API_KEY');
 const PORT = process.env.PORT || 1310;
 const Cors = require('cors');
 
+const gurdians = require('./routes/UserSpecificRoutes/guardian');
+const signup = require('./routes/signup');
+const user = require('./routes/user');
+
 //ws instance
 const wsServer = new ws.Server({ noServer: true });
 
@@ -66,32 +70,12 @@ const updateUserHelpRequest = (data) => {//need to optimize this function
   })
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//routes
-const gurdians = require('./routes/UserSpecificRoutes/guardian');
-const signup = require('./routes/signup');
-const { json } = require('express/lib/response');
-const { all } = require('express/lib/application');
-
 const connection_url = API;
 let helpRequests = []
+
 //mongo connection 
 mongoose.connect(connection_url, {
   useNewUrlParser: true,
-  // useCreateIndex: true,
   useUnifiedTopology: true,
 }).then(() => {
   console.log("Connected to DB")
@@ -106,8 +90,6 @@ wsServer.on('connection', socket => {
       if (eventName === "helpMe") {
         const payloadData = JSON.parse(message).payload
         updateUserHelpRequest(payloadData)
-        // helpRequests.push(message)
-        // wsServer.broadcast()
       } else if (eventName === "iAmSafe") {
         wsServer.broadcast({
           thisPersonIsSafeNow: {
@@ -126,26 +108,19 @@ wsServer.on('connection', socket => {
 
 
 //middlewares
-// app.use(express.static(__dirname))
 app.use(Cors({ origin: "*" }));
 app.use(express.json());
 // app.use(cookieParser());
 
-// setTimeout(() => {
-//   wsServer.emit('helpMe', { a: 1, b: 2 });
-// }, 2000);
-
-// wsServer.addListener("helpMe", (data) => {
-//   console.log(data)
-// })
-
 
 //api end points
 app.get('/', (req, res) => {
+  console.log("hit end point")
   res.send("Server running...")
 })
 app.use(gurdians)
 app.use(signup)
+app.use(user)
 
 //listener
 const server = app.listen(PORT, () => console.log(`Server Listening running at ${PORT}`));

@@ -14,6 +14,12 @@ const userProfileSchema = new mongoose.Schema({
     email: {
         type: String,
     },
+    emailVerified:{
+        type:Boolean
+    },
+    mobileVerified:{
+        type:Boolean
+    },
     mobileNumber: {
         type: String,
         require: true,
@@ -21,11 +27,6 @@ const userProfileSchema = new mongoose.Schema({
     emergencyContacts: [{
         type: String,
     }]
-    // isActive: {
-    //     type: Boolean,
-    //     require: true,
-    //     default: false
-    // }
 })
 
 module.exports = mongoose.model('users', userProfileSchema);
