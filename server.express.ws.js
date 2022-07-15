@@ -7,7 +7,6 @@ const API = process.env.MONGO_API || require('./API_KEY');
 const PORT = process.env.PORT || 1310;
 const Cors = require('cors');
 
-const gurdians = require('./routes/UserSpecificRoutes/guardian');
 const signup = require('./routes/signup');
 const user = require('./routes/user');
 
@@ -115,10 +114,8 @@ app.use(express.json());
 
 //api end points
 app.get('/', (req, res) => {
-  console.log("hit end point")
   res.send("Server running...")
 })
-app.use(gurdians)
 app.use(signup)
 app.use(user)
 

@@ -8,11 +8,6 @@ const otpSchema = new mongoose.Schema({
     type: String,
     require: true
   }
-  // isActive: {
-  //     type: Boolean,
-  //     require: true,
-  //     default: false
-  // }
 })
 
 module.exports = mongoose.model('otps', otpSchema);
